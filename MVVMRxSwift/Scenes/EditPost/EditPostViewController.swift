@@ -59,19 +59,19 @@ final class EditPostViewController: UIViewController {
          output.save.drive(),
          output.error.drive(errorBinding),
          output.delete.drive()]
-            .forEach({$0.addDisposableTo(disposeBag)})
+            .forEach({$0.disposed(by: disposeBag)})
     }
     
-    var postBinding: UIBindingObserver<EditPostViewController, Post> {
-        return UIBindingObserver(UIElement: self, binding: { (vc, post) in
+    var postBinding: Binder<Post> {
+        return Binder(self, binding: { (vc, post) in
             vc.titleTextField.text = post.title
             vc.detailsTextView.text = post.body
             vc.title = post.title
         })
     }
     
-    var errorBinding: UIBindingObserver<EditPostViewController, Error> {
-        return UIBindingObserver(UIElement: self, binding: { (vc, _) in
+    var errorBinding: Binder<Error> {
+        return Binder(self, binding: { (vc, _) in
             let alert = UIAlertController(title: "Save Error",
                                           message: "Something went wrong",
                                           preferredStyle: .alert)
@@ -87,8 +87,8 @@ final class EditPostViewController: UIViewController {
 
 
 extension Reactive where Base: UITextView {
-    var isEditable: UIBindingObserver<UITextView, Bool> {
-        return UIBindingObserver(UIElement: self.base, binding: { (textView, isEditable) in
+    var isEditable: Binder<Bool> {
+        return Binder(self.base, binding: { (textView, isEditable) in
             textView.isEditable = isEditable
         })
     }
